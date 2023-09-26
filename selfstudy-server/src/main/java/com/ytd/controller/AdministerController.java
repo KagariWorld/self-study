@@ -28,22 +28,24 @@ public class AdministerController {
     private AdministerService administerService;
     @Autowired
     private JwtProperties jwtProperties;
+
     @PostMapping("/register")
     @ApiOperation("管理员注册")
-    public Result<AdministerRegisterVO> register(@RequestBody AdministerRegisterDTO administerRegisterDTO){
-        log.info("管理员登录：{}",administerRegisterDTO);
+    public Result<AdministerRegisterVO> register(@RequestBody AdministerRegisterDTO administerRegisterDTO) {
+        log.info("管理员注册：{}", administerRegisterDTO);
         boolean flag = administerService.register(administerRegisterDTO);
-        if(flag){
+        if (flag) {
             return Result.success();
         }
-        return null;
+        return Result.error("注册失败");
     }
+
     @PostMapping("/login")
     @ApiOperation("管理员登录")
-    public Result<AdministerLoginVO> login(@RequestBody AdministerLoginDTO administerLoginDTO){
+    public Result<AdministerLoginVO> login(@RequestBody AdministerLoginDTO administerLoginDTO) {
         log.info("管理员登录：{}", administerLoginDTO);
         Administer administer = administerService.login(administerLoginDTO);
-        if(null == administer) {
+        if (null == administer) {
             return Result.error("密码错误或账户不存在！");
         }
         //登录成功后，生成jwt令牌

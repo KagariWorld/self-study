@@ -36,7 +36,6 @@ public class AdministerServiceImpl implements AdministerService {
 
         //密码比对
         //进行md5加密，然后再进行比对
-        //TODO
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(administer.getPassword())) {
             return null;
@@ -56,16 +55,21 @@ public class AdministerServiceImpl implements AdministerService {
 
     @Override
     public boolean register(AdministerRegisterDTO administerRegisterDTO) {
-        Administer administer = new Administer();
-        //对象属性拷贝
-        BeanUtils.copyProperties(administerRegisterDTO,administer);
-        //默认状态启用
-        administer.setStatus(StatusConstant.ENABLE);
-        //md5加密
-        administer.setPassword(DigestUtils.md5DigestAsHex(administer.getPassword().getBytes()));
-        //TODO 设置当前记录的创建时间和修改时间
-        //TODO 设置当前记录的创建人id和修改人id
-        boolean flag = administerMapper.addAdminister(administer);
-        return flag;
+        Administer selectResult = administerMapper.selectByUsername(administerRegisterDTO.getUsername());
+        // 查询为空的话
+        if(null == selectResult) {
+            Administer administer = new Administer();
+            //对象属性拷贝
+            BeanUtils.copyProperties(administerRegisterDTO, administer);
+            //默认状态启用
+            administer.setStatus(StatusConstant.ENABLE);
+            //md5加密
+            administer.setPassword(DigestUtils.md5DigestAsHex(administer.getPassword().getBytes()));
+            //TODO 设置当前记录的创建时间和修改时间
+            //TODO 设置当前记录的创建人id和修改人id
+            boolean flag = administerMapper.addAdminister(administer);
+            return flag;
+        }
+        return false;
     }
 }
