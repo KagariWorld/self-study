@@ -2,12 +2,14 @@ package com.ytd.controller;
 
 import com.ytd.constant.JwtClaimsConstant;
 import com.ytd.dto.AdministerLoginDTO;
+import com.ytd.dto.AdministerRegisterDTO;
 import com.ytd.entity.Administer;
 import com.ytd.properties.JwtProperties;
 import com.ytd.result.Result;
 import com.ytd.service.AdministerService;
 import com.ytd.utils.JwtUtil;
 import com.ytd.vo.AdministerLoginVO;
+import com.ytd.vo.AdministerRegisterVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,16 @@ public class AdministerController {
     private AdministerService administerService;
     @Autowired
     private JwtProperties jwtProperties;
+    @PostMapping("/register")
+    @ApiOperation("管理员注册")
+    public Result<AdministerRegisterVO> register(@RequestBody AdministerRegisterDTO administerRegisterDTO){
+        log.info("管理员登录：{}",administerRegisterDTO);
+        boolean flag = administerService.register(administerRegisterDTO);
+        if(flag){
+            return Result.success();
+        }
+        return null;
+    }
     @PostMapping("/login")
     @ApiOperation("管理员登录")
     public Result<AdministerLoginVO> login(@RequestBody AdministerLoginDTO administerLoginDTO){

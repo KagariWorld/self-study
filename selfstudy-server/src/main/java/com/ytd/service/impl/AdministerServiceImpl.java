@@ -2,6 +2,7 @@ package com.ytd.service.impl;
 
 import com.ytd.constant.MessageConstant;
 import com.ytd.constant.StatusConstant;
+import com.ytd.dto.AdministerRegisterDTO;
 import com.ytd.exception.AccountLockedException;
 import com.ytd.exception.AccountNotFoundException;
 import com.ytd.exception.PasswordErrorException;
@@ -9,6 +10,7 @@ import com.ytd.mapper.AdministerMapper;
 import com.ytd.service.AdministerService;
 import com.ytd.dto.AdministerLoginDTO;
 import com.ytd.entity.Administer;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -50,5 +52,20 @@ public class AdministerServiceImpl implements AdministerService {
 
         //3、返回实体对象
         return administer;
+    }
+
+    @Override
+    public boolean register(AdministerRegisterDTO administerRegisterDTO) {
+        Administer administer = new Administer();
+        //对象属性拷贝
+        BeanUtils.copyProperties(administerRegisterDTO,administer);
+        //默认状态启用
+        administer.setStatus(StatusConstant.ENABLE);
+        //md5加密
+        administer.setPassword(DigestUtils.md5DigestAsHex(administer.getPassword().getBytes()));
+        //TODO 设置当前记录的创建时间和修改时间
+        //TODO 设置当前记录的创建人id和修改人id
+        boolean flag = administerMapper.addAdminister(administer);
+        return flag;
     }
 }
