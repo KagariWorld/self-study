@@ -1,6 +1,7 @@
 package com.ytd.interceptor;
 
 import com.ytd.constant.JwtClaimsConstant;
+import com.ytd.context.BaseContext;
 import com.ytd.properties.JwtProperties;
 import com.ytd.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -41,13 +42,14 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
         //1、从请求头中获取令牌
         String token = request.getHeader(jwtProperties.getAdminTokenName());
-
         //2、校验令牌
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long adminId = Long.valueOf(claims.get(JwtClaimsConstant.ADMIN_ID).toString());
-            log.info("当前管理员id：", adminId);
+            log.info("当前管理员id:{}", adminId);
+            //根据jwt反向得出当前用户的id，并存入当前线程中
+            BaseContext.setCurrentId(adminId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {

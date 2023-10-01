@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Administer implements Serializable {
+public class User implements Serializable {
     private Long id;
     private String username;
     private String password;

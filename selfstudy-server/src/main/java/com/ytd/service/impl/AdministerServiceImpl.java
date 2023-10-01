@@ -2,7 +2,9 @@ package com.ytd.service.impl;
 
 import com.ytd.constant.MessageConstant;
 import com.ytd.constant.StatusConstant;
+import com.ytd.context.BaseContext;
 import com.ytd.dto.AdministerRegisterDTO;
+import com.ytd.entity.User;
 import com.ytd.exception.AccountLockedException;
 import com.ytd.exception.AccountNotFoundException;
 import com.ytd.exception.PasswordErrorException;
@@ -15,10 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class AdministerServiceImpl implements AdministerService {
     @Autowired
     private AdministerMapper administerMapper;
+
     @Override
     public Administer login(AdministerLoginDTO administerLoginDTO) {
         String username = administerLoginDTO.getUsername();
@@ -29,24 +35,21 @@ public class AdministerServiceImpl implements AdministerService {
 
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (administer == null) {
-            return null;
-            //账号不存在
-//            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            //账号不存在，抛出异常交给全局异常处理器
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
         //密码比对
         //进行md5加密，然后再进行比对
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(administer.getPassword())) {
-            return null;
             //密码错误
-//            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
 
         if (administer.getStatus() == StatusConstant.DISABLE) {
-            return null;
             //账号被锁定
-//            throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
+            throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
 
         //3、返回实体对象
@@ -54,22 +57,29 @@ public class AdministerServiceImpl implements AdministerService {
     }
 
     @Override
-    public boolean register(AdministerRegisterDTO administerRegisterDTO) {
-        Administer selectResult = administerMapper.selectByUsername(administerRegisterDTO.getUsername());
-        // 查询为空的话
-        if(null == selectResult) {
-            Administer administer = new Administer();
-            //对象属性拷贝
-            BeanUtils.copyProperties(administerRegisterDTO, administer);
-            //默认状态启用
-            administer.setStatus(StatusConstant.ENABLE);
-            //md5加密
-            administer.setPassword(DigestUtils.md5DigestAsHex(administer.getPassword().getBytes()));
-            //TODO 设置当前记录的创建时间和修改时间
-            //TODO 设置当前记录的创建人id和修改人id
-            boolean flag = administerMapper.addAdminister(administer);
-            return flag;
-        }
-        return false;
+    public void register(AdministerRegisterDTO administerRegisterDTO) {
+        Administer administer = new Administer();
+        //对象属性拷贝
+        BeanUtils.copyProperties(administerRegisterDTO, administer);
+        //默认状态启用
+        administer.setStatus(StatusConstant.ENABLE);
+        //md5加密
+        administer.setPassword(DigestUtils.md5DigestAsHex(administer.getPassword().getBytes()));
+        //设置当前记录的创建时间
+        administer.setCreateTime(LocalDateTime.now());
+        administerMapper.addAdminister(administer);
+    }
+
+    @Override
+    public List<User> selectAll() {
+        List<User> users = administerMapper.selectAll();
+        return users;
+    }
+
+    @Override
+    public Administer selectById() {
+        Long currentId = BaseContext.getCurrentId();
+        Administer administer = administerMapper.selectById(currentId);
+        return administer;
     }
 }
