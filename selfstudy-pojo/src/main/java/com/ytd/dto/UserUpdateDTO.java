@@ -5,10 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-
 @Data
-@ApiModel(description = "管理员修改信息传递的json")
-public class AdministerUpdateDTO implements Serializable {
+@ApiModel(description = "用户修改信息传递的json")
+public class UserUpdateDTO implements Serializable {
     @ApiModelProperty("用户名")
     private String username;
     @ApiModelProperty("手机号")

@@ -7,3 +7,11 @@ selfstudy:
     database: self_study
     username: root
     password: yangtongde
+
+  github:
+    bucket:
+      user: KagariWorld
+      repository: selfstudy_images
+      access-token: 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
+      url: https://cdn.jsdelivr.net/gh/${github.bucket.user}/${github.bucket.repository}/
+      api: https://api.github.com/repos/${github.bucket.user}/${github.bucket.repository}/contents/

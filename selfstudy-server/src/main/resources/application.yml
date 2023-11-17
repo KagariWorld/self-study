@@ -6,12 +6,18 @@ spring:
     active: dev
   main:
     allow-circular-references: true
+  mvc:
+  servlet:
+    multipart:
+      max-file-size: 10MB        # 设置单个文件最大大小为10MB
+      max-request-size: 100MB    # 设置多个文件大小为100MB
   datasource:
     type: ${selfstudy.datasource.type}
     driver-class-name: ${selfstudy.datasource.driver-class-name}
     url: jdbc:mysql://${selfstudy.datasource.host}:${selfstudy.datasource.port}/${selfstudy.datasource.database}?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
     username: ${selfstudy.datasource.username}
     password: ${selfstudy.datasource.password}
+
 
 mybatis:
   #mapper配置文件
@@ -29,6 +35,13 @@ logging:
         service: info
         controller: info
 
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
 selfstudy:
    jwt:
      # 设置jwt签名加密时使用的秘钥
@@ -37,3 +50,12 @@ selfstudy:
      admin-ttl: 7200000
      # 设置前端传递过来的令牌名称
      admin-token-name: token
+
+
+github:
+  bucket:
+      user: ${selfstudy.github.bucket.user}
+      repository: ${selfstudy.github.bucket.repository}
+      access-token: ${selfstudy.github.bucket.access-token}
+      url: ${selfstudy.github.bucket.url}
+      api: ${selfstudy.github.bucket.api}

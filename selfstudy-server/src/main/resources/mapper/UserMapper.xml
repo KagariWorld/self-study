@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ytd.mapper.UserMapper">
+    <update id="updateUser" parameterType="user">
+        update user
+        <set>
+            <if test="username!=null"> username = #{username},</if>
+            <if test="password!=null"> password = #{password},</if>
+            <if test="status!=null"> status = #{status},</if>
+            <if test="phone!=null"> phone = #{phone},</if>
+            <if test="sex!=null"> sex = #{sex},</if>
+            <if test="psnId!=null"> psn_id = #{psnId},</if>
+            <if test="updateTime!=null"> update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
